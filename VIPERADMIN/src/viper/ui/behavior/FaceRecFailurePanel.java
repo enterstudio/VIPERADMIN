@@ -67,7 +67,7 @@ public class FaceRecFailurePanel extends JPanel {
             			@Override
             			public void actionPerformed(ActionEvent arg0) {
             				// suspend user
-            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), true);
+            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), true, "Face Rec Failure");
             				JPanel panel = new FaceRecFailurePanel(frame);
             				frame.getContentPane().removeAll();
             				frame.getContentPane().add(panel);
@@ -81,7 +81,7 @@ public class FaceRecFailurePanel extends JPanel {
             			@Override
             			public void actionPerformed(ActionEvent arg0) {
             				// suspend user
-            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), false);
+            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), false, null);
             				JPanel panel = new FaceRecFailurePanel(frame);
             				frame.getContentPane().removeAll();
             				frame.getContentPane().add(panel);

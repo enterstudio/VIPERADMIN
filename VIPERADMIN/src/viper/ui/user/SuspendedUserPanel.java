@@ -1,4 +1,4 @@
-package viper.ui.behavior;
+package viper.ui.user;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,23 +16,24 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import viper.db.DBController;
+import viper.ui.behavior.DwellTimePanel;
 
-public class PasswordFailurePanel extends JPanel {
+public class SuspendedUserPanel extends JPanel {
 
 	private static JFrame frame = null;
 	private JScrollPane scrollPane;
 	private JTable table;
-	private Object[][] data = DBController.to3dArray(DBController.retrievePasswordFailure());
+	private Object[][] data = DBController.to3dArray(DBController.retrieveSuspendedUser());
 	
 	/**
 	 * Create the panel.
 	 */
-	public PasswordFailurePanel() {
+	public SuspendedUserPanel() {
 		super();
 		initialize();
 	}
 
-	public PasswordFailurePanel(JFrame f) {
+	public SuspendedUserPanel(JFrame f) {
 		super();
 		frame = f;
 		initialize();
@@ -62,27 +63,13 @@ public class PasswordFailurePanel extends JPanel {
                 if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
                     JPopupMenu popup = new JPopupMenu();
                 	JMenuItem menuItem;
-                	menuItem = new JMenuItem("Suspend User");
-            		menuItem.addActionListener(new ActionListener() {
-            			@Override
-            			public void actionPerformed(ActionEvent arg0) {
-            				// suspend user
-            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), true, "Password Failure");
-            				JPanel panel = new PasswordFailurePanel(frame);
-            				frame.getContentPane().removeAll();
-            				frame.getContentPane().add(panel);
-            				frame.getContentPane().validate();
-            				frame.getContentPane().repaint();
-            			}
-                    });
-                    popup.add(menuItem);
                 	menuItem = new JMenuItem("Unsuspend User");
             		menuItem.addActionListener(new ActionListener() {
             			@Override
             			public void actionPerformed(ActionEvent arg0) {
             				// suspend user
-            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), false, null);
-            				JPanel panel = new PasswordFailurePanel(frame);
+            				DBController.updateSuspension(data[table.getSelectedRow()][1].toString(), false, null);
+            				JPanel panel = new SuspendedUserPanel(frame);
             				frame.getContentPane().removeAll();
             				frame.getContentPane().add(panel);
             				frame.getContentPane().validate();
@@ -106,12 +93,13 @@ public class PasswordFailurePanel extends JPanel {
 	}
 	
 	class MyTableModel extends AbstractTableModel {
-       private String[] columnNames = {"Date and time",
-                                        "Username",
+       private String[] columnNames = {"Username",
                                         "UserId",
-                                        "Suspended"};
+                                        "Date Suspended",
+                                        "Reason",
+                                        "User response"};
        
-       Object[][] data = DBController.to3dArray(DBController.retrievePasswordFailure());
+       Object[][] data = DBController.to3dArray(DBController.retrieveSuspendedUser());
        
         /*private Object[][] data = {
 	    {"Kathy", "Smith",
@@ -148,9 +136,8 @@ public class PasswordFailurePanel extends JPanel {
          * then the last column would contain text ("true"/"false"),
          * rather than a check box.
          */
-        public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
+        /*
+*/
 
         /*
          * Don't need to implement this method unless your table's

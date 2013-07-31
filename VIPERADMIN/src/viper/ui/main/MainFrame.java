@@ -16,10 +16,14 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import viper.ui.behavior.DwellTimePanel;
 import viper.ui.behavior.FaceRecFailurePanel;
+import viper.ui.behavior.IPAddressPanel;
 import viper.ui.behavior.PasswordFailurePanel;
+import viper.ui.behavior.TypingSpeedPanel;
 import viper.ui.program.SessionPanel;
 import viper.ui.program.RegistrationPanel;
+import viper.ui.user.SuspendedUserPanel;
 
 public class MainFrame extends JFrame {
 
@@ -119,21 +123,46 @@ public class MainFrame extends JFrame {
 		menuItem = new JMenuItem("IP Addresses");
 		menuItem.getAccessibleContext().setAccessibleDescription(
 				"IP Addresses");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JPanel panel = new IPAddressPanel(frame);
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(panel);
+				frame.getContentPane().validate();
+				frame.getContentPane().repaint();
+			}
+        });
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("Dwell Time");
 		menuItem.getAccessibleContext().setAccessibleDescription(
 				"Dwell Time");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JPanel panel = new DwellTimePanel(frame);
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(panel);
+				frame.getContentPane().validate();
+				frame.getContentPane().repaint();
+			}
+        });
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("Typing Speed");
 		menuItem.getAccessibleContext().setAccessibleDescription(
 				"Typing Speed");
-		menu.add(menuItem);
-		
-		menuItem = new JMenuItem("Click Count");
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Click Count");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JPanel panel = new TypingSpeedPanel(frame);
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(panel);
+				frame.getContentPane().validate();
+				frame.getContentPane().repaint();
+			}
+        });
 		menu.add(menuItem);
 		
 		// Monitor users
@@ -145,11 +174,16 @@ public class MainFrame extends JFrame {
 		menuItem = new JMenuItem("Suspended Users");
 		menuItem.getAccessibleContext().setAccessibleDescription(
 				"Suspended Users");
-		menu.add(menuItem);
-		
-		menuItem = new JMenuItem("Suspected Users");
-		menuItem.getAccessibleContext().setAccessibleDescription(
-				"Suspected Users");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JPanel panel = new SuspendedUserPanel(frame);
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(panel);
+				frame.getContentPane().validate();
+				frame.getContentPane().repaint();
+			}
+        });
 		menu.add(menuItem);
 
 		this.setJMenuBar(menuBar);

@@ -17,22 +17,22 @@ import javax.swing.table.AbstractTableModel;
 
 import viper.db.DBController;
 
-public class PasswordFailurePanel extends JPanel {
+public class DwellTimePanel extends JPanel {
 
 	private static JFrame frame = null;
 	private JScrollPane scrollPane;
 	private JTable table;
-	private Object[][] data = DBController.to3dArray(DBController.retrievePasswordFailure());
+	private Object[][] data = DBController.to3dArray(DBController.retrieveDwellTime());
 	
 	/**
 	 * Create the panel.
 	 */
-	public PasswordFailurePanel() {
+	public DwellTimePanel() {
 		super();
 		initialize();
 	}
 
-	public PasswordFailurePanel(JFrame f) {
+	public DwellTimePanel(JFrame f) {
 		super();
 		frame = f;
 		initialize();
@@ -67,8 +67,8 @@ public class PasswordFailurePanel extends JPanel {
             			@Override
             			public void actionPerformed(ActionEvent arg0) {
             				// suspend user
-            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), true, "Password Failure");
-            				JPanel panel = new PasswordFailurePanel(frame);
+            				DBController.updateSuspension(data[table.getSelectedRow()][1].toString(), true, "Dwell Time");
+            				JPanel panel = new DwellTimePanel(frame);
             				frame.getContentPane().removeAll();
             				frame.getContentPane().add(panel);
             				frame.getContentPane().validate();
@@ -81,8 +81,8 @@ public class PasswordFailurePanel extends JPanel {
             			@Override
             			public void actionPerformed(ActionEvent arg0) {
             				// suspend user
-            				DBController.updateSuspension(data[table.getSelectedRow()][2].toString(), false, null);
-            				JPanel panel = new PasswordFailurePanel(frame);
+            				DBController.updateSuspension(data[table.getSelectedRow()][1].toString(), false, null);
+            				JPanel panel = new DwellTimePanel(frame);
             				frame.getContentPane().removeAll();
             				frame.getContentPane().add(panel);
             				frame.getContentPane().validate();
@@ -106,12 +106,13 @@ public class PasswordFailurePanel extends JPanel {
 	}
 	
 	class MyTableModel extends AbstractTableModel {
-       private String[] columnNames = {"Date and time",
-                                        "Username",
+       private String[] columnNames = {"Username",
                                         "UserId",
+                                        "Page",
+                                        "Dwell Deviation",
                                         "Suspended"};
        
-       Object[][] data = DBController.to3dArray(DBController.retrievePasswordFailure());
+       Object[][] data = DBController.to3dArray(DBController.retrieveDwellTime());
        
         /*private Object[][] data = {
 	    {"Kathy", "Smith",

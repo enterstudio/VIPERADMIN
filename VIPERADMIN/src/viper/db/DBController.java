@@ -101,17 +101,22 @@ public class DBController {
 	public static Object[][] to3dArray(ArrayList<Object[]> arr) {
 		Object[][] threeDArr = null;
 		
-		int row = arr.size();
-		int column = arr.get(0).length;
-		threeDArr = new Object[row][column];
-		
-		for (int i=0; i<row; i++) {
-			for (int j=0; j<column; j++) {
-				threeDArr[i][j] = arr.get(i)[j];
+		if (arr.size() > 0) {
+			int row = arr.size();
+			int column = arr.get(0).length;
+			threeDArr = new Object[row][column];
+			
+			for (int i=0; i<row; i++) {
+				for (int j=0; j<column; j++) {
+					threeDArr[i][j] = arr.get(i)[j];
+				}
 			}
+			return threeDArr;
 		}
-		
-		return threeDArr;
+		else {
+			threeDArr = new Object[0][0];
+			return threeDArr;
+		}
 	}
 	
 	public static ArrayList<Object[]> retrievePasswordFailure() {
@@ -147,7 +152,7 @@ public class DBController {
 		return arr;
 	}
 	
-	public static void updateSuspension(String userId, boolean userSuspended) {
+	public static void updateSuspension(String userId, boolean userSuspended, String reason) {
 		String sql;
 
 		try {
@@ -163,6 +168,28 @@ public class DBController {
 				pstmt.setString(2, userId);
 
 				pstmt.executeUpdate();
+				
+				if (userSuspended == true) {
+					sql = "INSERT INTO suspendeduser(`suspendedUserId`, `suspendedDate`, `suspendedReason`) " +
+						"VALUES (?, ?, ?);";
+
+					pstmt = con.prepareStatement(sql);
+
+					pstmt.setString(1, userId);
+					pstmt.setString(2, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+					pstmt.setString(3, reason);
+
+					pstmt.executeUpdate();
+				}
+				else {
+					sql = "DELETE FROM suspendeduser WHERE `suspendedUserId`=?;";
+
+					pstmt = con.prepareStatement(sql);
+
+					pstmt.setString(1, userId);
+
+					pstmt.executeUpdate();
+				}
 				pstmt.close();
 				con.close();
 			} catch (SQLException s) {
@@ -192,6 +219,142 @@ public class DBController {
 				     data[1] = rs.getString("username");
 				     data[2] = rs.getString("userId");
 				     data[3] = rs.getBoolean("userSuspended");
+				     arr.add(data);
+				}
+
+				pstmt.close();
+				con.close();
+			} catch (SQLException s) {
+				System.out.println("SQL statement is not executed!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return arr;
+	}
+	
+	public static ArrayList<Object[]> retrieveIPAddress() {
+		ResultSet rs = null;
+		String sql;
+		ArrayList<Object[]> arr = new ArrayList<Object[]>();
+
+		try {
+			con = DBController.getConnection();
+
+			try {
+				sql = "SELECT Time_Of_Attempt AS time, Date_Of_Attempt AS date, username, userId, userSuspended, Description, COUNT(*) AS count FROM entrancerecord INNER JOIN user ON entrancerecord.userWhoLoggedIn = user.userId WHERE Outcome='1' GROUP BY Description ORDER BY Date_Of_Attempt DESC;";
+				pstmt = con.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+				     Object[] data = new Object[6];
+				     data[0] = rs.getString("date") + " " + rs.getString("time");
+				     data[1] = rs.getString("username");
+				     data[2] = rs.getString("userId");
+				     data[3] = rs.getString("Description").split("::")[1];
+				     data[4] = rs.getInt("count");
+				     data[5] = rs.getBoolean("userSuspended");
+				     arr.add(data);
+				}
+
+				pstmt.close();
+				con.close();
+			} catch (SQLException s) {
+				System.out.println("SQL statement is not executed!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return arr;
+	}
+	
+	public static ArrayList<Object[]> retrieveDwellTime() {
+		ResultSet rs = null;
+		String sql;
+		ArrayList<Object[]> arr = new ArrayList<Object[]>();
+
+		try {
+			con = DBController.getConnection();
+
+			try {
+				sql = "SELECT username, userId, userSuspended, Destination, STDDEV_POP(duration) AS deviation FROM accessingrecord INNER JOIN user ON accessingrecord.userWhoAccessed = user.userId GROUP BY userId, Destination ORDER BY userId, Destination, Date_Of_Accessing DESC;";
+				pstmt = con.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+				     Object[] data = new Object[5];
+				     data[0] = rs.getString("username");
+				     data[1] = rs.getString("userId");
+				     data[2] = rs.getString("Destination");
+				     data[3] = rs.getString("deviation");
+				     data[4] = rs.getBoolean("userSuspended");
+				     arr.add(data);
+				}
+
+				pstmt.close();
+				con.close();
+			} catch (SQLException s) {
+				System.out.println("SQL statement is not executed!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return arr;
+	}
+	
+	public static ArrayList<Object[]> retrieveTypingSpeed() {
+		ResultSet rs = null;
+		String sql;
+		ArrayList<Object[]> arr = new ArrayList<Object[]>();
+
+		try {
+			con = DBController.getConnection();
+
+			try {
+				sql = "SELECT username, userId, userSuspended, SUBSTRING_INDEX(Description,'::', 1) AS category, STDDEV_POP(SUBSTRING_INDEX(Description,'::', -1)) AS deviation FROM logrecord INNER JOIN user ON logrecord.userWhoPerformAction = user.userId WHERE Event='Typing Speed' GROUP BY userId, SUBSTRING_INDEX(Description,'::', 1) ORDER BY userId;";
+				pstmt = con.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+				     Object[] data = new Object[5];
+				     data[0] = rs.getString("username");
+				     data[1] = rs.getString("userId");
+				     data[2] = rs.getString("category");
+				     data[3] = rs.getString("deviation");
+				     data[4] = rs.getBoolean("userSuspended");
+				     arr.add(data);
+				}
+
+				pstmt.close();
+				con.close();
+			} catch (SQLException s) {
+				System.out.println("SQL statement is not executed!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return arr;
+	}
+	public static ArrayList<Object[]> retrieveSuspendedUser() {
+		ResultSet rs = null;
+		String sql;
+		ArrayList<Object[]> arr = new ArrayList<Object[]>();
+
+		try {
+			con = DBController.getConnection();
+
+			try {
+				sql = "SELECT userId, username, suspendedDate, suspendedReason, suspendedResponse FROM user INNER JOIN suspendeduser ON user.userId = suspendeduser.suspendedUserId WHERE userSuspended='1';";
+				pstmt = con.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+				     Object[] data = new Object[5];
+				     data[0] = rs.getString("username");
+				     data[1] = rs.getString("userId");
+				     data[2] = rs.getString("suspendedDate");
+				     data[3] = rs.getString("suspendedReason");
+				     data[4] = rs.getString("suspendedResponse");
 				     arr.add(data);
 				}
 
