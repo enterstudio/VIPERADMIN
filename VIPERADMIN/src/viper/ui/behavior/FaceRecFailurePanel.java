@@ -16,6 +16,8 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import viper.db.DBController;
+import viper.ui.behavior.DwellTimePanel.MyTableCellRenderer;
+import viper.ui.behavior.DwellTimePanel.MyTableModel;
 
 public class FaceRecFailurePanel extends JPanel {
 
@@ -40,11 +42,7 @@ public class FaceRecFailurePanel extends JPanel {
 
 	private void initialize() {
 		table = new JTable(new MyTableModel());
-        //table.setPreferredScrollableViewportSize(new Dimension(900, 600));
         table.setFillsViewportHeight(true);
-        //table.setSize(800, 500);
-        //table.getSelectionModel().addListSelectionListener(new RowListener());
-        //table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

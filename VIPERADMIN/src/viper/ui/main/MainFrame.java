@@ -50,6 +50,22 @@ public class MainFrame extends JFrame {
 		
 		menuBar = new JMenuBar();
 		
+		// Overview
+		menu = new JMenu("Overview");
+		menu.getAccessibleContext().setAccessibleDescription(
+		        "Overview");
+		menu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JPanel panel = new LogAnalyser(frame);
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(panel);
+				frame.getContentPane().validate();
+				frame.getContentPane().repaint();
+			}
+        });
+		menuBar.add(menu);
+		
 		// Program stats
 		menu = new JMenu("Program stats");
 		menu.getAccessibleContext().setAccessibleDescription(
@@ -228,7 +244,7 @@ public class MainFrame extends JFrame {
 	 */
 	public static void main(String[] args) {
 		frame = new MainFrame();
-		JPanel panel = new OverviewPanel(frame);
+		JPanel panel = new LogAnalyser(frame);
 		frame.getContentPane().add(panel);
 		frame.setVisible(true);
 	}

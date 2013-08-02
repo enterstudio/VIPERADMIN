@@ -1,7 +1,7 @@
 package viper.ui.behavior;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -14,6 +14,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import viper.db.DBController;
 
@@ -40,12 +41,8 @@ public class IPAddressPanel extends JPanel {
 
 	private void initialize() {
 		table = new JTable(new MyTableModel());
-        //table.setPreferredScrollableViewportSize(new Dimension(900, 600));
         table.setFillsViewportHeight(true);
-        //table.setSize(800, 500);
-        //table.getSelectionModel().addListSelectionListener(new RowListener());
-        //table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());
-        table.addMouseListener(new MouseAdapter() {
+		table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 int r = table.rowAtPoint(e.getPoint());
@@ -104,7 +101,7 @@ public class IPAddressPanel extends JPanel {
         this.add(scrollPane);
 
 	}
-	
+
 	class MyTableModel extends AbstractTableModel {
        private String[] columnNames = {"Last Accessed Date",
                                         "Username",

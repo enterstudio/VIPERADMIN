@@ -1,6 +1,7 @@
 package viper.ui.behavior;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 import viper.db.DBController;
 
@@ -40,11 +43,8 @@ public class DwellTimePanel extends JPanel {
 
 	private void initialize() {
 		table = new JTable(new MyTableModel());
-        //table.setPreferredScrollableViewportSize(new Dimension(900, 600));
+		table.setDefaultRenderer(String.class, new MyTableCellRenderer());
         table.setFillsViewportHeight(true);
-        //table.setSize(800, 500);
-        //table.getSelectionModel().addListSelectionListener(new RowListener());
-        //table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -105,6 +105,33 @@ public class DwellTimePanel extends JPanel {
 
 	}
 	
+	public class MyTableCellRenderer extends DefaultTableCellRenderer {
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
+			Component c = super.getTableCellRendererComponent(table, value,
+					isSelected, hasFocus, row, column);
+
+			if (column == 3) {
+				System.out.println("getValueAt(row, column): " + data[row][column]);
+				double deviation = Double.parseDouble(data[row][column].toString());
+				if (deviation > 200) {
+					c.setBackground(Color.red);
+					c.setForeground(Color.white);
+	     	   }
+				else {
+					c.setBackground(Color.white);
+					c.setForeground(Color.black);
+				}
+			}
+			else {
+				c.setBackground(Color.white);
+				c.setForeground(Color.black);
+			}
+			return c;
+		}
+	}
+	
 	class MyTableModel extends AbstractTableModel {
        private String[] columnNames = {"Username",
                                         "UserId",
@@ -113,6 +140,7 @@ public class DwellTimePanel extends JPanel {
                                         "Suspended"};
        
        Object[][] data = DBController.to3dArray(DBController.retrieveDwellTime());
+
        
         /*private Object[][] data = {
 	    {"Kathy", "Smith",
@@ -126,7 +154,7 @@ public class DwellTimePanel extends JPanel {
 	    {"Joe", "Brown",
 	     "Pool", new Integer(10), new Boolean(false)}
         };*/
-
+       
         public int getColumnCount() {
             return columnNames.length;
         }
