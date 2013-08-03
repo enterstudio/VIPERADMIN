@@ -189,7 +189,7 @@ public class LogAnalyserController
 					
 					data[i][0] = rs.getString("UsernameUsed");
 					data[i][1] = rs.getString("Time_Of_Attempt");
-					data[i][2] = rs.getString("Time_Of_Exit");
+					data[i][2] = rs.getString("Date_Of_Attempt");
 					data[i][3] = rs.getString("InvalidAttemptsID");
 				
 				rs.next();

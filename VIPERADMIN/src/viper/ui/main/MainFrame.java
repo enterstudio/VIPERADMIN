@@ -54,16 +54,23 @@ public class MainFrame extends JFrame {
 		menu = new JMenu("Overview");
 		menu.getAccessibleContext().setAccessibleDescription(
 		        "Overview");
-		menu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menu.addMenuListener(new MenuListener() {
+	        @Override
+	        public void menuSelected(MenuEvent e) {
 				JPanel panel = new LogAnalyser(frame);
 				frame.getContentPane().removeAll();
 				frame.getContentPane().add(panel);
 				frame.getContentPane().validate();
 				frame.getContentPane().repaint();
-			}
-        });
+	        }
+	        @Override
+	        public void menuDeselected(MenuEvent e) {
+	        }
+	        @Override
+	        public void menuCanceled(MenuEvent e) {
+	            System.out.println("menuCanceled");
+	        }
+	    });
 		menuBar.add(menu);
 		
 		// Program stats
